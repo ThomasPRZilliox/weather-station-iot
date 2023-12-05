@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/css/styles.css">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="/js/jquery.gauge.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
+
+
+
+  <title>Weather Station Server</title>
+</head>
+<body>
+  <h1>Welcome to the Weather Station Server</h1>
+
+  <canvas id="temp_gauge" width="300" height="300"></canvas>
+  <canvas id="humidity_gauge" width="300" height="300"></canvas>
+
+  <script>
+    // This is required as we want the client local time
+    var formattedTimestamp = '<%= formatUnixTimestamp(data.time) %>';
+
+    // Convert the string to a Date object
+    var dateObject = new Date(formattedTimestamp);
+
+    // Extract components from the timestamp ( the month is zero-indexed in JavaScript)
+    var [year, month, day, hours, minutes, seconds] = formattedTimestamp.split(/[- :]/);
+
+    // Create a UTC Date object
+    var dateObjectUTC = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
+
+    // Convert the Date object to an ISO string with "Z" for UTC time
+    formattedTimestamp = dateObjectUTC.toISOString();
+
+    // Parse the date string into a JavaScript Date object
+    const isoDateObject = new Date(formattedTimestamp);
+
+    // Convert the date to local time
+    const localTime = isoDateObject.toLocaleString();
+
+
+
+  </script>
+
+ 
+  <p>The current temperature is <%= data.temp %> &deg;C and humidity is <%= data.humidity %> &#37;.
+    Last measurement: <span id="formattedTimestamp"></span></p>
+  
+  <script>
+
+    // Use JavaScript to set the content of the HTML element
+    document.getElementById('formattedTimestamp').textContent = localTime;
+  </script>
+  
+
+  <script>
+    
+    // $fn.gauge(value, options);
+    const tempCanvas = document.getElementById('temp_gauge');
+    const tempCtx = tempCanvas.getContext('2d');
+  
+    // Set the font size
+    const tempW = tempCanvas.width;
+    const tempFontArgs = tempCtx.font.split(' ');
+    tempCtx.font = (tempW * 0.14) + 'px' + ' ' + tempFontArgs[tempFontArgs.length - 1];
+    $("#temp_gauge").gauge(<%= data.temp %>, {
+        // Minimum value to display
+        min: 10,
+        // Maximum value to display
+        max: 60,
+        // Unit to be displayed after the value
+        unit: "°C",
+        // color for the value and bar
+        color: "lightsalmon",
+        colorAlpha: 1,
+        // background color of the bar
+        bgcolor: "rgba(0, 0, 0, 0)",
+        // default or halfcircle
+        type: "default"
+      });
+  </script>
+  
+  <script>
+    // $fn.gauge(value, options);
+    const humidityCanvas = document.getElementById('humidity_gauge');
+    const humidityCtx = humidityCanvas.getContext('2d');
+  
+    // Set the font size
+    const humidityW = humidityCanvas.width;
+    const humidityFontArgs = humidityCtx.font.split(' ');
+    humidityCtx.font = (humidityW * 0.14) + 'px' + ' ' + humidityFontArgs[humidityFontArgs.length - 1];
+    $("#humidity_gauge").gauge(<%= data.humidity %>, {
+        // Minimum value to display
+        min: 0,
+        // Maximum value to display
+        max: 100,
+        // Unit to be displayed after the value
+        unit: "%",
+        // color for the value and bar
+        color: "lightblue",
+        colorAlpha: 1,
+        // background color of the bar
+        bgcolor: "rgba(0, 0, 0, 0)",
+        // default or halfcircle
+        type: "default"
+      });
+  </script>
+
+<canvas id="myChart"></canvas>
+
+<script>
+
+  // Retrieve the chart data
+  var chartData = <%- JSON.stringify(data2) %>;
+  console.log(chartData);
+
+  // Extract the chart columns
+  var chartColumn1 = chartData.datasets[0].data;
+  var chartColumn2 = chartData.datasets[1].data;
+  
+  // Extract the labels (timestamps)
+  var labels = chartData.labels;
+
+  // Create the chart
+  var ctx = document.getElementById('myChart').getContext('2d');
+  var chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Temperature',
+        data: chartColumn1,
+        borderColor: 'rgb(255,160,122)',
+        backgroundColor: 'rgb(255,160,122)'
+      }, {
+        label: 'Humidity',
+        data: chartColumn2,
+        borderColor: 'rgb(173,216,230)',
+        backgroundColor: 'rgb(173,216,230)'
+      }]
+    },
+    options: {
+      scales: {
+        x: {
+          display: true,
+          title: {
+            display: true,
+            text: ''
+          }
+        },
+        y: {
+          display: true,
+          title: {
+            display: true,
+            text: ''
+          }
+        }
+      }
+    }
+  });
+</script>
+
+  
+
+</body>
+</html>

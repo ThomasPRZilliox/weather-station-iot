@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="mobile_app.MainPage"
+             BackgroundColor="White"
+             >
+
+    <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                 Command="{Binding RefreshCommand}">
+        <ScrollView>
+            <VerticalStackLayout
+                Spacing="25"
+                Padding="30,0"
+                VerticalOptions="Center">
+                <Label Text="{Binding TemperartureText}" 
+                   FontSize="108"
+                   HorizontalOptions="CenterAndExpand"
+                   VerticalOptions="CenterAndExpand"
+                   TextColor="#F3B664"/>
+
+                <Label Text="{Binding HumidityText}" 
+                   FontSize="92"
+                   HorizontalOptions="CenterAndExpand"
+                   VerticalOptions="CenterAndExpand"
+                   TextColor="#87C4FF"/>
+
+                <Label Text="Last measurements made at:" 
+                   FontSize="24"
+                   HorizontalOptions="CenterAndExpand"
+                   VerticalOptions="CenterAndExpand"
+                   TextColor="Black"/>
+
+                <Label Text="{Binding DateText}" 
+                   FontSize="24"
+                   HorizontalOptions="CenterAndExpand"
+                   VerticalOptions="CenterAndExpand"
+                   TextColor="Black"/>
+                
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+
+
+</ContentPage>
+
