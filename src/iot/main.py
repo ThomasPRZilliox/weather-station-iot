@@ -63,7 +63,7 @@ while True:
         
     except Exception as e:
         print("An exception occurred : {}".format(e))
-        # Wait 5 seconds in case of success
+        # Wait 5 seconds in case of failure
         time.sleep(5)
         
 
